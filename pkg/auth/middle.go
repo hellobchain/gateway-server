@@ -2,7 +2,7 @@ package auth
 
 import (
 	"net/http"
-	"path"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/hellobchain/gateway-server/pkg/config"
@@ -11,6 +11,7 @@ import (
 // Middleware 返回一个可插拔的 gin 中间件
 func Middleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
+
 		cfg := config.Get()
 		jwt := cfg.JWT
 		if !jwt.Enabled {
@@ -27,11 +28,13 @@ func Middleware() gin.HandlerFunc {
 		h := c.GetHeader(cfg.Server.Header)
 		if h == "" {
 			ResultCode(c, http.StatusUnauthorized, "missing "+cfg.Server.Header)
+			c.Abort()
 			return
 		}
 		claims, err := Validate(h) // 验签 + 状态
 		if err != nil {
 			ResultCode(c, http.StatusUnauthorized, err.Error())
+			c.Abort()
 			return
 		}
 		// 往请求头写用户数据
@@ -41,13 +44,21 @@ func Middleware() gin.HandlerFunc {
 	}
 }
 
-// matched 支持通配符 *
+// matched 支持 * 和 **
 func matched(pattern, target string) bool {
+	// 完全匹配
 	if pattern == target {
 		return true
 	}
-	if len(pattern) > 0 && pattern[len(pattern)-1] == '*' {
-		return path.Dir(target) == path.Dir(pattern)
+	// 处理 **
+	if strings.HasSuffix(pattern, "/**") {
+		prefix := strings.TrimSuffix(pattern, "/**")
+		return strings.HasPrefix(target, prefix+"/") || target == prefix
+	}
+	// 处理 *
+	if strings.HasSuffix(pattern, "/*") {
+		prefix := strings.TrimSuffix(pattern, "/*")
+		return strings.HasPrefix(target, prefix+"/") && !strings.Contains(strings.TrimPrefix(target, prefix+"/"), "/")
 	}
 	return false
 }

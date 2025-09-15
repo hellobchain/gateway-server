@@ -1,20 +1,47 @@
 package middleware
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
+	log "github.com/hellobchain/gateway-server/pkg/logger"
+	"github.com/hellobchain/wswlog/wlogging"
 )
 
 // Logger 简单请求日志
+var logClient = wlogging.MustGetFileLoggerWithoutName(log.LogConfig)
+
+// 请求日志汇总信息
 func Logger() gin.HandlerFunc {
-	return gin.LoggerWithFormatter(func(param gin.LogFormatterParams) string {
-		return "[" + param.TimeStamp.Format(time.RFC3339) + "] " +
-			param.Method + " " + param.Path + " " + fmt.Sprintf("%d", param.StatusCode) + " " +
-			param.Latency.String() + "\n"
-	})
+	return func(c *gin.Context) {
+		requestId := uuid.New().ID()
+		// 开始时间
+		start := time.Now()
+		// path
+		path := c.Request.URL.Path
+		// ip
+		clientIP := c.ClientIP()
+		// 方法
+		method := c.Request.Method
+		// 处理请求
+		c.Next()
+		// 结束时间
+		end := time.Now()
+		// 执行时间
+		latency := end.Sub(start)
+		// 状态
+		statusCode := c.Writer.Status()
+		logClient.Infof("| %10d | %3d | %13v | %15s | %s  %s |",
+			requestId,
+			statusCode,
+			latency,
+			clientIP,
+			method,
+			path,
+		)
+	}
 }
 
 // CORS 允许跨域

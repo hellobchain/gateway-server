@@ -22,7 +22,7 @@ var (
 // Register 初始化 + 定时同步配置变化
 func Register(r *gin.Engine, cfg *config.Cfg) {
 	// 全局中间件
-	r.Use(middleware.Logger(), gin.Recovery(), auth.Middleware(), middleware.CORS())
+	r.Use(middleware.Logger(), gin.Recovery(), middleware.CORS(), auth.Middleware())
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{"message": "pong"})
 	})
