@@ -8,7 +8,7 @@ import (
 	"github.com/hellobchain/gateway-server/middleware"
 	"github.com/hellobchain/gateway-server/pkg/auth"
 	"github.com/hellobchain/gateway-server/pkg/config"
-	"github.com/hellobchain/gateway-server/pkg/log"
+	log "github.com/hellobchain/gateway-server/pkg/logger"
 	"github.com/hellobchain/gateway-server/proxy"
 	"github.com/hellobchain/wswlog/wlogging"
 )

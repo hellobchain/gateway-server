@@ -7,7 +7,7 @@ import (
 	"sync"
 
 	"github.com/fsnotify/fsnotify"
-	"github.com/hellobchain/gateway-server/pkg/log"
+	log "github.com/hellobchain/gateway-server/pkg/logger"
 	"github.com/hellobchain/wswlog/wlogging"
 	"github.com/spf13/viper"
 )
