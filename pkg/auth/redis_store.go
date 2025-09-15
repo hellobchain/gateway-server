@@ -48,5 +48,3 @@ func (r *redisStore) GetClaims(jti string) (JwtMapClaims, error) {
 	err := r.client.HGet(context.Background(), claimsKey(jti), "$").Scan(&m)
 	return m, err
 }
-func validKey(jti string) string  { return "jwt:valid:" + jti }
-func claimsKey(jti string) string { return "jwt:claims:" + jti }

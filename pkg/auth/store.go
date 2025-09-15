@@ -33,3 +33,6 @@ func SetClaims(jti string, claims JwtMapClaims) error {
 func GetClaims(jti string) (JwtMapClaims, error) {
 	return store.GetClaims(jti)
 }
+
+func validKey(jti string) string  { return "login_tokens:" + jti }
+func claimsKey(jti string) string { return "jwt:claims:" + jti }
