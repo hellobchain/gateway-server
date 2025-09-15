@@ -7,6 +7,7 @@ package auth
 
 import (
 	"fmt"
+	"reflect"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -43,16 +44,16 @@ func toSignedToken(claims *JwtClaims) (string, error) {
 // LoadJwtClaims load jwt claims
 func LoadJwtClaims(tokenText string, signingMethod jwt.SigningMethod) (JwtMapClaims, error) {
 	token, err := jwt.ParseWithClaims(tokenText, &JwtClaims{}, func(t *jwt.Token) (interface{}, error) {
-		if t.Method != signMethod {
-			return nil, fmt.Errorf("unexpected alg: %v", t.Header["alg"])
+		if t.Method != signingMethod {
+			return nil, fmt.Errorf("unexpected alg: %v type:%v", t.Header["alg"], reflect.TypeOf(signingMethod))
 		}
-		switch signMethod {
+		switch signingMethod {
 		case jwt.SigningMethodHS256:
 			return secret, nil
 		case jwt.SigningMethodES256:
 			return publicKey, nil
 		default:
-			return nil, fmt.Errorf("unknown algorithm")
+			return nil, fmt.Errorf("unknown algorithm type:%v", reflect.TypeOf(signingMethod))
 		}
 	})
 	if err != nil {

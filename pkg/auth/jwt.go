@@ -5,6 +5,7 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 	"fmt"
+	"strings"
 	"sync"
 
 	"github.com/dgrijalva/jwt-go"
@@ -13,8 +14,8 @@ import (
 
 var (
 	signMethod jwt.SigningMethod
-	publicKey  *ecdsa.PublicKey // ES256 用
-	secret     []byte           // HS256 用
+	publicKey  *ecdsa.PublicKey                          // ES256 用
+	secret     []byte           = []byte("OR56PELLdDcY") // HS256 用
 	once       sync.Once
 )
 
@@ -45,11 +46,7 @@ func Init(cfg *config.JWT) {
 
 // Validate 验签 + Redis 状态检查，并返回 claims
 func Validate(bearer string) (JwtMapClaims, error) {
-	if len(bearer) < 8 || bearer[:7] != "Bearer " {
-		return nil, fmt.Errorf("invalid bearer format")
-	}
-	tokenStr := bearer[7:]
-
+	tokenStr := strings.TrimPrefix(bearer, "Bearer ")
 	claims, err := LoadJwtClaims(tokenStr, signMethod)
 	if err != nil {
 		return nil, err
