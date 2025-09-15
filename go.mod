@@ -3,11 +3,11 @@ module github.com/hellobchain/gateway-server
 go 1.25
 
 require (
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/fsnotify/fsnotify v1.9.0
 	github.com/gin-contrib/cors v1.7.6
 	github.com/gin-gonic/gin v1.10.1
 	github.com/go-redis/redis/v8 v8.11.5
-	github.com/golang-jwt/jwt/v5 v5.3.0
 	github.com/google/uuid v1.1.2
 	github.com/hellobchain/wswlog v0.0.0-20250316041106-9c00e4e92e5b
 	github.com/patrickmn/go-cache v2.1.0+incompatible

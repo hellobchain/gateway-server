@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/go-redis/redis/v8"
-	"github.com/golang-jwt/jwt/v5"
 	"github.com/hellobchain/gateway-server/pkg/config"
 )
 
@@ -40,12 +39,12 @@ func (r *redisStore) IsTokenValid(jti string) (bool, error) {
 	n, err := r.client.Exists(context.Background(), validKey(jti)).Result()
 	return n == 1, err
 }
-func (r *redisStore) SetClaims(jti string, claims jwt.MapClaims) error {
+func (r *redisStore) SetClaims(jti string, claims JwtMapClaims) error {
 	return r.client.HSet(context.Background(), claimsKey(jti), "$", claims).Err()
 }
 
-func (r *redisStore) GetClaims(jti string) (jwt.MapClaims, error) {
-	var m jwt.MapClaims
+func (r *redisStore) GetClaims(jti string) (JwtMapClaims, error) {
+	var m JwtMapClaims
 	err := r.client.HGet(context.Background(), claimsKey(jti), "$").Scan(&m)
 	return m, err
 }

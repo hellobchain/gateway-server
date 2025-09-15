@@ -38,8 +38,8 @@ func Middleware() gin.HandlerFunc {
 			return
 		}
 		// 往请求头写用户数据
-		c.Request.Header.Set("X-User-Info", claims["sub"].(string))
-		_ = SetClaims(claims["jti"].(string), claims)
+		c.Request.Header.Set("X-User-Info", claims.GetUserName())
+		_ = SetClaims(claims.GetUuid(), claims)
 		c.Next()
 	}
 }

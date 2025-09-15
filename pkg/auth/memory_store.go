@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/golang-jwt/jwt/v5"
 	"github.com/hellobchain/gateway-server/pkg/config"
 	"github.com/patrickmn/go-cache"
 )
@@ -30,17 +29,17 @@ func (m *memoryStore) DelToken(jti string) error {
 	m.c.Delete(jti)
 	return nil
 }
-func (m *memoryStore) SetClaims(jti string, claims jwt.MapClaims) error {
+func (m *memoryStore) SetClaims(jti string, claims JwtMapClaims) error {
 	m.claims.Set(jti, claims, cache.DefaultExpiration)
 	return nil
 }
 
-func (m *memoryStore) GetClaims(jti string) (jwt.MapClaims, error) {
+func (m *memoryStore) GetClaims(jti string) (JwtMapClaims, error) {
 	v, ok := m.claims.Get(jti)
 	if !ok {
 		return nil, fmt.Errorf("claims not found")
 	}
-	return v.(jwt.MapClaims), nil
+	return v.(JwtMapClaims), nil
 }
 func (m *memoryStore) IsTokenValid(jti string) (bool, error) {
 	_, ok := m.c.Get(jti)

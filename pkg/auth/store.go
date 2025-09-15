@@ -1,14 +1,12 @@
 package auth
 
-import "github.com/golang-jwt/jwt/v5"
-
 // TokenStore 定义行为
 type TokenStore interface {
 	AddToken(jti string, exp int64) error
 	DelToken(jti string) error
 	IsTokenValid(jti string) (bool, error)
-	SetClaims(jti string, claims jwt.MapClaims) error
-	GetClaims(jti string) (jwt.MapClaims, error)
+	SetClaims(jti string, claims JwtMapClaims) error
+	GetClaims(jti string) (JwtMapClaims, error)
 }
 
 var store TokenStore
@@ -29,9 +27,9 @@ func IsTokenValid(jti string) (bool, error) {
 	return store.IsTokenValid(jti)
 }
 
-func SetClaims(jti string, claims jwt.MapClaims) error {
+func SetClaims(jti string, claims JwtMapClaims) error {
 	return store.SetClaims(jti, claims)
 }
-func GetClaims(jti string) (jwt.MapClaims, error) {
+func GetClaims(jti string) (JwtMapClaims, error) {
 	return store.GetClaims(jti)
 }
