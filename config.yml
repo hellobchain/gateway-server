@@ -1,0 +1,34 @@
+# 网关监听端口
+server:
+  port: 8080
+  header: Authorization
+  log_level: info
+  mode: debug
+
+# 路由转发规则：path -> target
+routes:
+  - path: /order
+    target: http://localhost:8001
+  - path: /user
+    target: http://localhost:8002
+  - path: /stock
+    target: http://localhost:8003
+
+# JWT 配置
+jwt:
+  enabled: true
+  algorithm: HS256      # 显式声明算法
+  secret: "gateway-server-secret"   # HS256 对称密钥
+  skip_paths:
+    - /ping
+  store:
+    type: memory     # memory 或 redis
+    # memory 专用
+    memory:
+      cleanup_interval_sec: 60   # 后台清理间隔
+    # redis 专用
+    redis:
+      addr: "localhost:6379"
+      password: ""
+      db: 0
+      buffer_sec: 300
