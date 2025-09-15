@@ -93,7 +93,7 @@ func Load(path string) {
 		if err := viper.Unmarshal(&cfg); err != nil {
 			logger.Fatalf("unmarshal config failed: %v", err)
 		}
-		wlogging.SetGlobalLogLevel(cfg.Server.LogLevel)
+		log.SetLogLevel(cfg.Server.LogLevel)
 		// 打印
 		ret, _ := json.MarshalIndent(cfg, "", "  ")
 		logger.Debugf("config: %v", string(ret))
@@ -106,7 +106,7 @@ func Load(path string) {
 			if err := viper.Unmarshal(&cfg); err != nil {
 				logger.Errorf("reload config error: %v", err)
 			} else {
-				wlogging.SetGlobalLogLevel(cfg.Server.LogLevel)
+				log.SetLogLevel(cfg.Server.LogLevel)
 				ret, _ := json.MarshalIndent(cfg, "", "  ")
 				logger.Debugf("config: %v", string(ret))
 				logger.Info("config reloaded")
