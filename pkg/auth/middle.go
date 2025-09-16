@@ -19,15 +19,22 @@ func Middleware() gin.HandlerFunc {
 			return
 		}
 		header := ""
+		var serverFind bool
 		current := c.Request.URL.Path
 		for _, r := range cfg.Routes {
 			if strings.HasPrefix(current, r.Path) {
+				serverFind = true
 				header = r.Header
 				if !r.IsJwt {
 					c.Next()
 					return
 				}
 			}
+		}
+		if !serverFind {
+			ResultCode(c, http.StatusNotFound, current+" not found")
+			c.Abort()
+			return
 		}
 		for _, p := range jwt.SkipPaths {
 			if matched(p, current) {
