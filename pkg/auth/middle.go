@@ -18,16 +18,26 @@ func Middleware() gin.HandlerFunc {
 			c.Next()
 			return
 		}
+		header := ""
 		current := c.Request.URL.Path
+		for _, r := range cfg.Routes {
+			if strings.HasPrefix(current, r.Path) {
+				header = r.Header
+				if !r.IsJwt {
+					c.Next()
+					return
+				}
+			}
+		}
 		for _, p := range jwt.SkipPaths {
 			if matched(p, current) {
 				c.Next()
 				return
 			}
 		}
-		h := c.GetHeader(cfg.Server.Header)
+		h := c.GetHeader(header)
 		if h == "" {
-			ResultCode(c, http.StatusUnauthorized, "missing "+cfg.Server.Header)
+			ResultCode(c, http.StatusUnauthorized, "missing "+header)
 			c.Abort()
 			return
 		}

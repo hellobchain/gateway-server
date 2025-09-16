@@ -38,7 +38,7 @@ func reloadRoutes(r *gin.Engine, cfg *config.Cfg) {
 	defer rmu.Unlock()
 
 	newRules := make(map[string]bool)
-	for _, rule := range *cfg.Routes {
+	for _, rule := range cfg.Routes {
 		path := rule.Path
 		newRules[path] = true
 		if _, ok := registered[path]; ok {

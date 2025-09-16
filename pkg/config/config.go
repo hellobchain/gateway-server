@@ -16,18 +16,19 @@ var logger = wlogging.MustGetFileLoggerWithoutName(log.LogConfig)
 
 type Cfg struct {
 	Server *ServerConfig   `mapstructure:"server"` // 服务器配置
-	Routes *[]RoutesConfig `mapstructure:"routes"` // 路由配置
+	Routes []*RoutesConfig `mapstructure:"routes"` // 路由配置
 	JWT    *JWT            `mapstructure:"jwt"`    // JWT 配置
 }
 type ServerConfig struct {
 	Port     int    `mapstructure:"port"`      // 监听端口
-	Header   string `mapstructure:"header"`    // token 的 header
 	LogLevel string `mapstructure:"log_level"` // 日志级别
 	Mode     string `mapstructure:"mode"`      // 运行模式
 }
 type RoutesConfig struct {
 	Path   string `mapstructure:"path"`   // 匹配的路径
 	Target string `mapstructure:"target"` // 目标地址
+	IsJwt  bool   `mapstructure:"is_jwt"`  // 是否需要 JWT
+	Header string `mapstructure:"header"` // 请求头
 }
 type JWT struct {
 	Enabled    bool         `mapstructure:"enabled"`
