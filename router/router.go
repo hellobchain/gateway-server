@@ -47,7 +47,7 @@ func reloadRoutes(r *gin.Engine, cfg *config.Cfg) {
 		// 新增路由
 		p := proxy.NewReverseProxy(rule.Target)
 		registered[path] = p
-		r.Any(path+"/*proxyPath", proxy.Handler(p))
+		r.Any(path, proxy.Handler(p))
 		logger.Infof("registered route: %s -> %s", path, rule.Target)
 	}
 }
