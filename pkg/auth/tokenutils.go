@@ -33,7 +33,7 @@ func NewSignedToken(userId int64, userName string, userType string, uuid string,
 
 // toSignedToken to signed token
 func toSignedToken(claims *JwtClaims) (string, error) {
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	token := jwt.NewWithClaims(signMethod, claims)
 	signedToken, err := token.SignedString([]byte(secret))
 	if err != nil {
 		return "", err

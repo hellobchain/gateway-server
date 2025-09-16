@@ -14,8 +14,8 @@ import (
 
 var (
 	signMethod jwt.SigningMethod
-	publicKey  *ecdsa.PublicKey                          // ES256 用
-	secret     []byte           = []byte("OR56PELLdDcY") // HS256 用
+	publicKey  *ecdsa.PublicKey // ES256 用
+	secret     []byte           // HS256 用
 	once       sync.Once
 )
 
