@@ -1,7 +1,6 @@
 package router
 
 import (
-	"net/http/httputil"
 	"sync"
 
 	"github.com/gin-gonic/gin"
@@ -15,8 +14,7 @@ import (
 
 var logger = wlogging.MustGetFileLoggerWithoutName(log.LogConfig)
 var (
-	registered = make(map[string]*httputil.ReverseProxy) // path -> proxy
-	rmu        sync.Mutex
+	rmu sync.Mutex
 )
 
 // Register 初始化 + 定时同步配置变化
@@ -40,14 +38,14 @@ func reloadRoutes(r *gin.Engine, cfg *config.Cfg) {
 	newRules := make(map[string]bool)
 	for _, rule := range cfg.Routes {
 		path := rule.Path
-		newRules[path] = true
-		if _, ok := registered[path]; ok {
+		if _, ok := newRules[path]; ok {
 			continue // 已存在
 		}
 		// 新增路由
 		p := proxy.NewReverseProxy(rule.Target)
-		registered[path] = p
+		newRules[path] = true
 		r.Any(path, proxy.Handler(p))
+		r.Any(path+"/*proxyPath", proxy.Handler(p))
 		logger.Infof("registered route: %s -> %s", path, rule.Target)
 	}
 }
