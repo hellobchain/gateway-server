@@ -13,7 +13,7 @@ import (
 var logger = wlogging.MustGetFileLoggerWithoutName(log.LogConfig)
 
 // Register 初始化 + 定时同步配置变化
-func Register(r *gin.Engine, cfg *config.Cfg) {
+func Register(r *gin.Engine, cfg config.Cfg) {
 	// 全局中间件
 	r.Use(middleware.Logger(), gin.Recovery(), middleware.CORS(), auth.Middleware(), auth.RedisIntercept())
 	r.GET("/ping", func(c *gin.Context) {
@@ -24,7 +24,7 @@ func Register(r *gin.Engine, cfg *config.Cfg) {
 }
 
 // reloadRoutes 增量更新路由
-func loadRoutes(r *gin.Engine, cfg *config.Cfg) {
+func loadRoutes(r *gin.Engine, cfg config.Cfg) {
 	// 初始化 JWT 组件
 	auth.Init(cfg.JWT)
 

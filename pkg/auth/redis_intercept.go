@@ -40,7 +40,7 @@ func RedisIntercept() gin.HandlerFunc {
 }
 
 // ---------- 辅助函数 ----------
-func urlCheck(path string, urlCfg *config.InterceptUrlConfig) (hit bool, forbidden bool) {
+func urlCheck(path string, urlCfg config.InterceptUrlConfig) (hit bool, forbidden bool) {
 	for _, p := range urlCfg.BlackList {
 		if matched(p, path) {
 			return true, true
@@ -57,7 +57,7 @@ func urlCheck(path string, urlCfg *config.InterceptUrlConfig) (hit bool, forbidd
 	return false, false
 }
 
-func globalLimit(interceptConfig *config.InterceptConfig) bool {
+func globalLimit(interceptConfig config.InterceptConfig) bool {
 	key := globalQpsKey()
 	n, err := Incr(key)
 	if err != nil {

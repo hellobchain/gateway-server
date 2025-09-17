@@ -13,7 +13,7 @@ type redisStore struct {
 	buffer time.Duration
 }
 
-func NewRedisStore(cfg *config.RedisConfig) (TokenStore, error) {
+func NewRedisStore(cfg config.RedisConfig) (TokenStore, error) {
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     cfg.Addr,
 		Password: cfg.Password,

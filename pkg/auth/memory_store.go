@@ -13,7 +13,7 @@ type memoryStore struct {
 	claims *cache.Cache // 单独 namespace 避免冲突
 }
 
-func NewMemoryStore(cfg *config.JWT) (TokenStore, error) {
+func NewMemoryStore(cfg config.JWT) (TokenStore, error) {
 	def := cache.New(cache.NoExpiration, time.Duration(cfg.Store.Memory.CleanupIntervalSec)*time.Second)
 	return &memoryStore{
 		c:      def,

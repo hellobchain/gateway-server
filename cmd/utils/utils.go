@@ -30,7 +30,7 @@ func loadConfig() {
 }
 
 // 初始化 TokenStore
-func initTokenStore(cfg *config.Cfg) {
+func initTokenStore(cfg config.Cfg) {
 	var store auth.TokenStore
 	switch cfg.JWT.Store.Type {
 	case "redis":
@@ -52,14 +52,14 @@ func initTokenStore(cfg *config.Cfg) {
 }
 
 // 注册所有路由与中间件
-func registerGinRouter(cfg *config.Cfg) *gin.Engine {
+func registerGinRouter(cfg config.Cfg) *gin.Engine {
 	r := gin.New()
 	gin.SetMode(cfg.Server.Mode)
 	router.Register(r, cfg) // 注册所有路由与中间件
 	return r
 }
 
-func startWebServer(cfg *config.Cfg, r *gin.Engine) {
+func startWebServer(cfg config.Cfg, r *gin.Engine) {
 	webAddress := config.GetWebServerAddress(cfg)
 	logger.Info("Gateway-server listening on " + webAddress)
 	if err := r.Run(webAddress); err != nil {

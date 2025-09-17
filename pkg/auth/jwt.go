@@ -20,7 +20,7 @@ var (
 )
 
 // Init 根据配置初始化验签参数
-func Init(cfg *config.JWT) {
+func Init(cfg config.JWT) {
 	once.Do(func() {
 		switch cfg.Algorithm {
 		case "HS256":

@@ -15,10 +15,10 @@ import (
 var logger = wlogging.MustGetFileLoggerWithoutName(log.LogConfig)
 
 type Cfg struct {
-	Server          *ServerConfig    `mapstructure:"server"`    // 服务器配置
-	Routes          []*RoutesConfig  `mapstructure:"routes"`    // 路由配置
-	JWT             *JWT             `mapstructure:"jwt"`       // JWT 配置
-	InterceptConfig *InterceptConfig `mapstructure:"intercept"` // 拦截配置
+	Server          ServerConfig    `mapstructure:"server"`    // 服务器配置
+	Routes          []RoutesConfig  `mapstructure:"routes"`    // 路由配置
+	JWT             JWT             `mapstructure:"jwt"`       // JWT 配置
+	InterceptConfig InterceptConfig `mapstructure:"intercept"` // 拦截配置
 }
 type ServerConfig struct {
 	Port     int    `mapstructure:"port"`      // 监听端口
@@ -33,19 +33,19 @@ type RoutesConfig struct {
 	IsOneLevel bool   `mapstructure:"is_one_level"`
 }
 type JWT struct {
-	Enabled    bool         `mapstructure:"enabled"`
-	Algorithm  string       `mapstructure:"algorithm"`   // HS256 / ES256
-	Secret     string       `mapstructure:"secret"`      // 对称密钥
-	PublicKey  string       `mapstructure:"public_key"`  // 仅 ES256 用
-	PrivateKey string       `mapstructure:"private_key"` // 仅 ES256 用
-	SkipPaths  []string     `mapstructure:"skip_paths"`
-	Store      *StoreConfig `mapstructure:"store"` // 存储配置
+	Enabled    bool        `mapstructure:"enabled"`
+	Algorithm  string      `mapstructure:"algorithm"`   // HS256 / ES256
+	Secret     string      `mapstructure:"secret"`      // 对称密钥
+	PublicKey  string      `mapstructure:"public_key"`  // 仅 ES256 用
+	PrivateKey string      `mapstructure:"private_key"` // 仅 ES256 用
+	SkipPaths  []string    `mapstructure:"skip_paths"`
+	Store      StoreConfig `mapstructure:"store"` // 存储配置
 }
 
 type StoreConfig struct {
-	Type   string        `mapstructure:"type"` // memory | redis
-	Memory *MemoryConfig `mapstructure:"memory"`
-	Redis  *RedisConfig  `mapstructure:"redis"`
+	Type   string       `mapstructure:"type"` // memory | redis
+	Memory MemoryConfig `mapstructure:"memory"`
+	Redis  RedisConfig  `mapstructure:"redis"`
 }
 
 type MemoryConfig struct {
@@ -60,16 +60,10 @@ type RedisConfig struct {
 }
 
 type InterceptConfig struct {
-	Enabled bool                   `mapstructure:"enabled"`
-	Token   *InterceptTokenConfig  `mapstructure:"token"`
-	IP      *InterceptIpConfig     `mapstructure:"ip"`
-	URL     *InterceptUrlConfig    `mapstructure:"url"`
-	Global  *InterceptGlobalConfig `mapstructure:"global"`
-}
-
-type InterceptTokenConfig struct {
-	WhiteList bool `mapstructure:"white_list"`
-	BlackList bool `mapstructure:"black_list"`
+	Enabled bool                  `mapstructure:"enabled"`
+	IP      InterceptIpConfig     `mapstructure:"ip"`
+	URL     InterceptUrlConfig    `mapstructure:"url"`
+	Global  InterceptGlobalConfig `mapstructure:"global"`
 }
 
 type InterceptIpConfig struct {
@@ -88,12 +82,12 @@ type InterceptGlobalConfig struct {
 
 var (
 	once sync.Once
-	cfg  *Cfg
+	cfg  Cfg
 	mu   sync.RWMutex
 )
 
 // Get 读取当前配置（并发安全）
-func Get() *Cfg {
+func Get() Cfg {
 	mu.RLock()
 	defer mu.RUnlock()
 	return cfg
@@ -146,6 +140,6 @@ func Load(path string) {
 	})
 }
 
-func GetWebServerAddress(cfg *Cfg) string {
+func GetWebServerAddress(cfg Cfg) string {
 	return fmt.Sprintf(":%d", cfg.Server.Port)
 }
