@@ -33,10 +33,10 @@ jwt:
 intercept:
   enabled: false
   ip:
-    flowLimit: true
+    flow_limit: true
     qps: 100            # 单 IP 每秒 100
   url:
-    blackList: []
-    whiteList: []       # 若开启，仅允许白名单
+    black_list: []
+    white_list: []       # 若开启，仅允许白名单
   global:
     qps: 10000          # 网关总 QPS
