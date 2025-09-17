@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/hellobchain/gateway-server/pkg/auth"
@@ -35,12 +34,17 @@ func LbHandler(lbBalancer lb.Balancer) gin.HandlerFunc {
 			auth.ResultCode(c, http.StatusServiceUnavailable, "no available instance")
 			return
 		}
-		logger.Infof("pick instance: %s", addr)
+		logger.Debugf("pick instance: %s", addr)
 		p := NewReverseProxy(addr)
 		if isRemovePrex {
-			prefix := c.Param("prefix")
-			logger.Infof("remove prefix: %s", prefix)
-			c.Request.URL.Path = strings.TrimPrefix(c.Request.URL.Path, prefix)
+			prefix := c.Param("proxyPath")
+			if prefix != "" && prefix[0] == '/' {
+				prefix = prefix[1:]
+			}
+			targetPath := "/" + prefix
+			c.Request.URL.Path = targetPath
+			logger.Debugf("real router path: %s", targetPath)
+			c.Request.URL.Path = targetPath
 		}
 		p.ServeHTTP(c.Writer, c.Request)
 	}
