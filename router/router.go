@@ -58,6 +58,7 @@ func getLbInstances(rtcs []config.RouterTargetsConfig) []lb.Instance {
 		lbInstances[i].Addr = rtc.Target
 		lbInstances[i].Weight = rtc.Weight
 		lbInstances[i].Protocol = rtc.Protocol
+		lbInstances[i].IsRemovePrex = rtc.IsRemovePrex
 	}
 	return lbInstances
 }

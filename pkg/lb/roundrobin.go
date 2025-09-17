@@ -18,19 +18,23 @@ func New(insts []Instance) Balancer {
 	return w
 }
 
-func (w *weightedRR) Pick() (string, bool) {
+func (w *weightedRR) Pick() (string, bool, bool) {
 	if w.total == 0 {
-		return "", false
+		return "", false, false
 	}
 	pos := atomic.AddUint64(&w.pos, 1) % uint64(w.total)
 	for _, v := range w.insts {
 		if pos < uint64(v.Weight) {
-			return getAddr(v), true
+			return getAddr(v), true, v.IsRemovePrex
 		}
 		pos -= uint64(v.Weight)
 	}
+	if len(w.insts) == 0 {
+		return "", false, false
+	}
 	// 兜底
-	return getAddr(w.insts[0]), true
+	defaultInstance := w.insts[0]
+	return getAddr(defaultInstance), true, defaultInstance.IsRemovePrex
 }
 
 func getAddr(inst Instance) string {

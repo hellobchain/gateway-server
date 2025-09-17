@@ -34,9 +34,10 @@ type RoutesConfig struct {
 }
 
 type RouterTargetsConfig struct {
-	Target   string `mapstructure:"target"`   // 目标地址 192.168.80:80
-	Protocol string `mapstructure:"protocol"` // 协议 http
-	Weight   int    `mapstructure:"weight"`   // 权重
+	Target       string `mapstructure:"target"`         // 目标地址 192.168.80:80
+	Protocol     string `mapstructure:"protocol"`       // 协议 http
+	Weight       int    `mapstructure:"weight"`         // 权重
+	IsRemovePrex bool   `mapstructure:"is_remove_prex"` // 是否移除前缀
 }
 type JWT struct {
 	Enabled    bool        `mapstructure:"enabled"`
