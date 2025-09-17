@@ -6,12 +6,11 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	log "github.com/hellobchain/gateway-server/pkg/logger"
 	"github.com/hellobchain/wswlog/wlogging"
 )
 
 // Logger 简单请求日志
-var logClient = wlogging.MustGetFileLoggerWithoutName(log.LogConfig)
+var logClient = wlogging.MustGetFileLoggerWithoutName(nil)
 
 // 请求日志汇总信息
 func Logger() gin.HandlerFunc {

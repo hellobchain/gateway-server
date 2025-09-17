@@ -6,12 +6,11 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/hellobchain/gateway-server/pkg/auth"
 	"github.com/hellobchain/gateway-server/pkg/config"
-	log "github.com/hellobchain/gateway-server/pkg/logger"
 	"github.com/hellobchain/gateway-server/router"
 	"github.com/hellobchain/wswlog/wlogging"
 )
 
-var logger = wlogging.MustGetFileLoggerWithoutName(log.LogConfig)
+var logger = wlogging.MustGetFileLoggerWithoutName(nil)
 
 func Init() {
 	loadConfig()

@@ -8,11 +8,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/hellobchain/gateway-server/pkg/auth"
 	"github.com/hellobchain/gateway-server/pkg/lb"
-	log "github.com/hellobchain/gateway-server/pkg/logger"
 	"github.com/hellobchain/wswlog/wlogging"
 )
 
-var logger = wlogging.MustGetFileLoggerWithoutName(log.LogConfig)
+var logger = wlogging.MustGetFileLoggerWithoutName(nil)
 
 // NewReverseProxy 创建针对 target 的反向代理
 func NewReverseProxy(target string) *httputil.ReverseProxy {

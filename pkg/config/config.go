@@ -7,12 +7,11 @@ import (
 	"sync"
 
 	"github.com/fsnotify/fsnotify"
-	log "github.com/hellobchain/gateway-server/pkg/logger"
 	"github.com/hellobchain/wswlog/wlogging"
 	"github.com/spf13/viper"
 )
 
-var logger = wlogging.MustGetFileLoggerWithoutName(log.LogConfig)
+var logger = wlogging.MustGetFileLoggerWithoutName(nil)
 
 type Cfg struct {
 	Server          ServerConfig    `mapstructure:"server"`    // 服务器配置
@@ -124,7 +123,7 @@ func Load(path string) {
 		if err := viper.Unmarshal(&cfg); err != nil {
 			logger.Fatalf("unmarshal config failed: %v", err)
 		}
-		log.SetLogLevel(cfg.Server.LogLevel)
+		wlogging.SetGlobalLogLevel(cfg.Server.LogLevel)
 		// 打印
 		ret, _ := json.MarshalIndent(cfg, "", "  ")
 		logger.Debugf("config: %v", string(ret))
@@ -137,7 +136,7 @@ func Load(path string) {
 			if err := viper.Unmarshal(&cfg); err != nil {
 				logger.Errorf("reload config error: %v", err)
 			} else {
-				log.SetLogLevel(cfg.Server.LogLevel)
+				wlogging.SetGlobalLogLevel(cfg.Server.LogLevel)
 				ret, _ := json.MarshalIndent(cfg, "", "  ")
 				logger.Debugf("config: %v", string(ret))
 				logger.Info("config reloaded")

@@ -4,11 +4,10 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	log "github.com/hellobchain/gateway-server/pkg/logger"
 	"github.com/hellobchain/wswlog/wlogging"
 )
 
-var logger = wlogging.MustGetFileLoggerWithoutName(log.LogConfig)
+var logger = wlogging.MustGetFileLoggerWithoutName(nil)
 
 func ResultCode(ctx *gin.Context, code int, msg string) {
 	var httpCode = http.StatusOK

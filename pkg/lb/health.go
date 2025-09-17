@@ -5,11 +5,10 @@ import (
 	"sync"
 	"time"
 
-	log "github.com/hellobchain/gateway-server/pkg/logger"
 	"github.com/hellobchain/wswlog/wlogging"
 )
 
-var logger = wlogging.MustGetFileLoggerWithoutName(log.LogConfig)
+var logger = wlogging.MustGetFileLoggerWithoutName(nil)
 
 // HealthChecker 简易 TCP/HTTP 探活
 type HealthChecker struct {

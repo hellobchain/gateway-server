@@ -8,12 +8,11 @@ import (
 	"github.com/hellobchain/gateway-server/pkg/auth"
 	"github.com/hellobchain/gateway-server/pkg/config"
 	"github.com/hellobchain/gateway-server/pkg/lb"
-	log "github.com/hellobchain/gateway-server/pkg/logger"
 	"github.com/hellobchain/gateway-server/proxy"
 	"github.com/hellobchain/wswlog/wlogging"
 )
 
-var logger = wlogging.MustGetFileLoggerWithoutName(log.LogConfig)
+var logger = wlogging.MustGetFileLoggerWithoutName(nil)
 
 func initLB(insts []lb.Instance) lb.Balancer {
 	balancer := lb.New(insts)

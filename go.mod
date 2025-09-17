@@ -9,7 +9,7 @@ require (
 	github.com/gin-gonic/gin v1.10.1
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/google/uuid v1.1.2
-	github.com/hellobchain/wswlog v0.0.0-20250316041106-9c00e4e92e5b
+	github.com/hellobchain/wswlog v0.0.0-20250917145740-f4ff1a0c0917
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/spf13/viper v1.21.0
 )
