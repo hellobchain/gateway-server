@@ -1,15 +1,24 @@
 # 网关监听端口
 server:
   port: 8080
-  log_level: info
+  log_level: debug
   mode: debug
 
 # 路由转发规则：path -> target
 routes:
   - path: /dm
-    target: http:#172.22.209.108:3405
+    targets: 
+      - target: 172.22.209.108:3405 # rwa api
+        weight: 1 # 权重
+        protocol: http # 请求协议
     is_jwt: false
-    header: Authorization
+  - path: /chainmaker
+    targets: 
+      - target: 172.22.209.108:3403 # 链码服务
+        weight: 1 # 权重
+        protocol: http # 请求协议
+    is_jwt: true
+    header: DM-RWA-Authorization
 
 # JWT 配置
 jwt:

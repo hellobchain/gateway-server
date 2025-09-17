@@ -26,11 +26,17 @@ type ServerConfig struct {
 	Mode     string `mapstructure:"mode"`      // 运行模式
 }
 type RoutesConfig struct {
-	Path       string `mapstructure:"path"`   // 匹配的路径
-	Target     string `mapstructure:"target"` // 目标地址
-	IsJwt      bool   `mapstructure:"is_jwt"` // 是否需要 JWT
-	Header     string `mapstructure:"header"` // 请求头
-	IsOneLevel bool   `mapstructure:"is_one_level"`
+	Path       string                `mapstructure:"path"`    // 匹配的路径
+	Targets    []RouterTargetsConfig `mapstructure:"targets"` // 目标地址
+	IsJwt      bool                  `mapstructure:"is_jwt"`  // 是否需要 JWT
+	Header     string                `mapstructure:"header"`  // 请求头
+	IsOneLevel bool                  `mapstructure:"is_one_level"`
+}
+
+type RouterTargetsConfig struct {
+	Target   string `mapstructure:"target"`   // 目标地址 192.168.80:80
+	Protocol string `mapstructure:"protocol"` // 协议 http
+	Weight   int    `mapstructure:"weight"`   // 权重
 }
 type JWT struct {
 	Enabled    bool        `mapstructure:"enabled"`
