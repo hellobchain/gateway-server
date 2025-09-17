@@ -15,9 +15,10 @@ import (
 var logger = wlogging.MustGetFileLoggerWithoutName(log.LogConfig)
 
 type Cfg struct {
-	Server *ServerConfig   `mapstructure:"server"` // 服务器配置
-	Routes []*RoutesConfig `mapstructure:"routes"` // 路由配置
-	JWT    *JWT            `mapstructure:"jwt"`    // JWT 配置
+	Server          *ServerConfig    `mapstructure:"server"`    // 服务器配置
+	Routes          []*RoutesConfig  `mapstructure:"routes"`    // 路由配置
+	JWT             *JWT             `mapstructure:"jwt"`       // JWT 配置
+	InterceptConfig *InterceptConfig `mapstructure:"intercept"` // 拦截配置
 }
 type ServerConfig struct {
 	Port     int    `mapstructure:"port"`      // 监听端口
@@ -56,6 +57,33 @@ type RedisConfig struct {
 	Password  string `mapstructure:"password"`
 	DB        int    `mapstructure:"db"`
 	BufferSec int    `mapstructure:"buffer_sec"`
+}
+
+type InterceptConfig struct {
+	Enabled bool                   `mapstructure:"enabled"`
+	Token   *InterceptTokenConfig  `mapstructure:"token"`
+	IP      *InterceptIpConfig     `mapstructure:"ip"`
+	URL     *InterceptUrlConfig    `mapstructure:"url"`
+	Global  *InterceptGlobalConfig `mapstructure:"global"`
+}
+
+type InterceptTokenConfig struct {
+	WhiteList bool `mapstructure:"white_list"`
+	BlackList bool `mapstructure:"black_list"`
+}
+
+type InterceptIpConfig struct {
+	FlowLimit bool `mapstructure:"flow_limit"`
+	QPS       int  `mapstructure:"qps"`
+}
+
+type InterceptUrlConfig struct {
+	WhiteList []string `mapstructure:"white_list"`
+	BlackList []string `mapstructure:"black_list"`
+}
+
+type InterceptGlobalConfig struct {
+	QPS int `mapstructure:"qps"`
 }
 
 var (

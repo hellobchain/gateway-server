@@ -56,7 +56,7 @@ func Validate(bearer string) (JwtMapClaims, error) {
 	if jti == "" {
 		return nil, fmt.Errorf("missing jti")
 	}
-	valid, err := IsTokenValid(jti)
+	valid, err := IsTokenValid(validTokenKey(jti))
 	if err != nil {
 		return nil, fmt.Errorf("redis err: %w", err)
 	}

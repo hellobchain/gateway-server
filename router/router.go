@@ -1,8 +1,6 @@
 package router
 
 import (
-	"sync"
-
 	"github.com/gin-gonic/gin"
 	"github.com/hellobchain/gateway-server/middleware"
 	"github.com/hellobchain/gateway-server/pkg/auth"
@@ -13,27 +11,22 @@ import (
 )
 
 var logger = wlogging.MustGetFileLoggerWithoutName(log.LogConfig)
-var (
-	rmu sync.Mutex
-)
 
 // Register 初始化 + 定时同步配置变化
 func Register(r *gin.Engine, cfg *config.Cfg) {
 	// 全局中间件
-	r.Use(middleware.Logger(), gin.Recovery(), middleware.CORS(), auth.Middleware())
+	r.Use(middleware.Logger(), gin.Recovery(), middleware.CORS(), auth.Middleware(), auth.RedisIntercept())
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{"message": "pong"})
 	})
 	// 首次加载
-	reloadRoutes(r, cfg)
+	loadRoutes(r, cfg)
 }
 
 // reloadRoutes 增量更新路由
-func reloadRoutes(r *gin.Engine, cfg *config.Cfg) {
+func loadRoutes(r *gin.Engine, cfg *config.Cfg) {
 	// 初始化 JWT 组件
 	auth.Init(cfg.JWT)
-	rmu.Lock()
-	defer rmu.Unlock()
 
 	newRules := make(map[string]bool)
 	for _, rule := range cfg.Routes {
