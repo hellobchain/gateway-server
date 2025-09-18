@@ -19,7 +19,7 @@ func NewReverseProxy(target string) *httputil.ReverseProxy {
 	return httputil.NewSingleHostReverseProxy(u)
 }
 
-// Handler 包装一下，把前缀去掉再转发
+// Handler
 func Handler(p *httputil.ReverseProxy) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		p.ServeHTTP(c.Writer, c.Request)
