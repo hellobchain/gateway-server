@@ -1,6 +1,7 @@
 package router
 
 import (
+	"encoding/json"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -14,10 +15,13 @@ import (
 
 var logger = wlogging.MustGetFileLoggerWithoutName(nil)
 
-func initLB(insts []lb.Instance) lb.Balancer {
+func initLB(insts []lb.Instance, healthCheckInterval int) lb.Balancer {
+	if healthCheckInterval == 0 { // 默认 5 秒
+		healthCheckInterval = 5
+	}
 	balancer := lb.New(insts)
 	// 每 5 秒探活
-	checker := lb.NewHealthChecker(balancer, 5*time.Second)
+	checker := lb.NewHealthChecker(balancer, time.Duration(healthCheckInterval)*time.Second)
 	checker.Start(insts)
 	return balancer
 }
@@ -43,12 +47,17 @@ func loadRoutes(r *gin.Engine, cfg config.Cfg) {
 		if _, ok := newRules[path]; ok {
 			continue // 已存在
 		}
-		lbBalancer := initLB(getLbInstances(rule.Targets))
+		lbBalancer := initLB(getLbInstances(rule.Targets), rule.HealthCheckInterval)
 		newRules[path] = true
 		r.Any(path, proxy.LbHandler(lbBalancer))
 		r.Any(path+"/*proxyPath", proxy.LbHandler(lbBalancer))
-		logger.Infof("registered route: %s -> %v", path, rule.Targets)
+		logger.Infof("registered route: %s -> %s", path, toString(rule.Targets))
 	}
+}
+
+func toString(rtcs []config.RouterTargetsConfig) string {
+	ret, _ := json.Marshal(rtcs)
+	return string(ret)
 }
 
 func getLbInstances(rtcs []config.RouterTargetsConfig) []lb.Instance {

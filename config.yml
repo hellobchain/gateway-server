@@ -8,17 +8,18 @@ server:
 routes:
   - path: /dm
     targets: 
-      - target: 172.22.209.108:3405 # rwa api
+      - target: 127.0.0.1:3405 # rwa api
         weight: 1 # 权重
         protocol: http # 请求协议
     is_jwt: false
+    health_check_interval: 5 # 健康检查间隔
   - path: /chainmaker
     targets: 
-      - target: 172.22.209.108:3403 # 链码服务
+      - target: 127.0.0.1:3403 # 链码服务
         weight: 1 # 权重
         protocol: http # 请求协议
     is_jwt: true
-    header: DM-RWA-Authorization
+    header: token
 
 # JWT 配置
 jwt:
