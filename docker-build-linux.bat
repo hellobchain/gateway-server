@@ -12,4 +12,4 @@ go build -trimpath -ldflags="-s -w" -o ..\bin\gateway-server.bin
 
 :: 2) 构建镜像
 cd /d "%~dp0"
-docker build -t dm/gateway-server:%VERSION% -f .\docker\Dockerfile-linux .
+docker build -t github.com/hellobchain/gateway-server:%VERSION% -f .\docker\Dockerfile-linux .
