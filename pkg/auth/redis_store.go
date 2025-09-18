@@ -9,8 +9,8 @@ import (
 )
 
 type redisStore struct {
-	client *redis.Client
-	buffer time.Duration
+	client *redis.Client // redis client
+	buffer time.Duration // buffer time
 }
 
 func NewRedisStore(cfg config.RedisConfig) (TokenStore, error) {

@@ -21,8 +21,8 @@ type Cfg struct {
 }
 type ServerConfig struct {
 	Port     int    `mapstructure:"port"`      // 监听端口
-	LogLevel string `mapstructure:"log_level"` // 日志级别
-	Mode     string `mapstructure:"mode"`      // 运行模式
+	LogLevel string `mapstructure:"log_level"` // 日志级别 info debug error
+	Mode     string `mapstructure:"mode"`      // 运行模式 debug release test
 }
 type RoutesConfig struct {
 	Path                string                `mapstructure:"path"`                  // 匹配的路径
@@ -39,57 +39,57 @@ type RouterTargetsConfig struct {
 	IsRemovePrex bool   `mapstructure:"is_remove_prex"` // 是否移除前缀
 }
 type JWT struct {
-	Enabled    bool        `mapstructure:"enabled"`
+	Enabled    bool        `mapstructure:"enabled"`     // 是否启用
 	Algorithm  string      `mapstructure:"algorithm"`   // HS256 / ES256
 	Secret     string      `mapstructure:"secret"`      // 对称密钥
 	PublicKey  string      `mapstructure:"public_key"`  // 仅 ES256 用
 	PrivateKey string      `mapstructure:"private_key"` // 仅 ES256 用
-	SkipPaths  []string    `mapstructure:"skip_paths"`
-	Store      StoreConfig `mapstructure:"store"` // 存储配置
+	SkipPaths  []string    `mapstructure:"skip_paths"`  // 跳过认证的路径
+	Store      StoreConfig `mapstructure:"store"`       // 存储配置
 }
 
 type StoreConfig struct {
-	Type   string       `mapstructure:"type"` // memory | redis
-	Memory MemoryConfig `mapstructure:"memory"`
-	Redis  RedisConfig  `mapstructure:"redis"`
+	Type   string       `mapstructure:"type"`   // memory | redis
+	Memory MemoryConfig `mapstructure:"memory"` // 内存配置
+	Redis  RedisConfig  `mapstructure:"redis"`  // redis 配置
 }
 
 type MemoryConfig struct {
-	CleanupIntervalSec int `mapstructure:"cleanup_interval_sec"`
+	CleanupIntervalSec int `mapstructure:"cleanup_interval_sec"` // 内存清理间隔
 }
 
 type RedisConfig struct {
-	Addr      string `mapstructure:"addr"`
-	Password  string `mapstructure:"password"`
-	DB        int    `mapstructure:"db"`
-	BufferSec int    `mapstructure:"buffer_sec"`
+	Addr      string `mapstructure:"addr"`       // redis 地址
+	Password  string `mapstructure:"password"`   // redis 密码
+	DB        int    `mapstructure:"db"`         // redis db
+	BufferSec int    `mapstructure:"buffer_sec"` // redis 缓存时间
 }
 
 type InterceptConfig struct {
-	Enabled bool                  `mapstructure:"enabled"`
-	IP      InterceptIpConfig     `mapstructure:"ip"`
-	URL     InterceptUrlConfig    `mapstructure:"url"`
-	Global  InterceptGlobalConfig `mapstructure:"global"`
+	Enabled bool                  `mapstructure:"enabled"` // 是否开启拦截
+	IP      InterceptIpConfig     `mapstructure:"ip"`      // ip 拦截
+	URL     InterceptUrlConfig    `mapstructure:"url"`     // url 拦截
+	Global  InterceptGlobalConfig `mapstructure:"global"`  // 全局拦截
 }
 
 type InterceptIpConfig struct {
-	FlowLimit bool `mapstructure:"flow_limit"`
-	QPS       int  `mapstructure:"qps"`
+	FlowLimit bool `mapstructure:"flow_limit"` // ip 流量拦截
+	QPS       int  `mapstructure:"qps"`        // ip 拦截
 }
 
 type InterceptUrlConfig struct {
-	WhiteList []string `mapstructure:"white_list"`
-	BlackList []string `mapstructure:"black_list"`
+	WhiteList []string `mapstructure:"white_list"` // url 白名单
+	BlackList []string `mapstructure:"black_list"` // url 黑名单
 }
 
 type InterceptGlobalConfig struct {
-	QPS int `mapstructure:"qps"`
+	QPS int `mapstructure:"qps"` // 全局拦截
 }
 
 var (
-	once sync.Once
-	cfg  Cfg
-	mu   sync.RWMutex
+	once sync.Once    // 配置单例
+	cfg  Cfg          // 配置
+	mu   sync.RWMutex // 读写锁
 )
 
 // Get 读取当前配置（并发安全）

@@ -73,10 +73,10 @@ func LoadJwtClaims(tokenText string, signingMethod jwt.SigningMethod) (JwtMapCla
 // JwtClaims jwt claims
 type JwtClaims struct {
 	jwt.StandardClaims
-	UserId   int64
-	UserName string
-	UserType string
-	Uuid     string
+	UserId   int64  // 用户id
+	UserName string // 用户名
+	UserType string // 用户类型
+	Uuid     string // 用户uuid
 }
 
 type JwtMapClaims map[string]interface{}

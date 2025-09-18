@@ -12,8 +12,8 @@ var logger = wlogging.MustGetFileLoggerWithoutName(nil)
 
 // HealthChecker 简易 TCP/HTTP 探活
 type HealthChecker struct {
-	interval time.Duration
-	balancer Balancer
+	interval time.Duration // 检测间隔
+	balancer Balancer      // 负载均衡
 }
 
 func NewHealthChecker(b Balancer, interval time.Duration) *HealthChecker {

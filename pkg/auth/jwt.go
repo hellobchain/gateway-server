@@ -13,10 +13,10 @@ import (
 )
 
 var (
-	signMethod jwt.SigningMethod
-	publicKey  *ecdsa.PublicKey // ES256 用
-	secret     []byte           // HS256 用
-	once       sync.Once
+	signMethod jwt.SigningMethod // / 签名方法
+	publicKey  *ecdsa.PublicKey  // ES256 用
+	secret     []byte            // HS256 用
+	once       sync.Once         // 初始化一次
 )
 
 // Init 根据配置初始化验签参数

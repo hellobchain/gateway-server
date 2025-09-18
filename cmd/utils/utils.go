@@ -33,12 +33,14 @@ func initTokenStore(cfg config.Cfg) {
 	var store auth.TokenStore
 	switch cfg.JWT.Store.Type {
 	case "redis":
+		logger.Debugf("redis store: %s", cfg.JWT.Store.Redis.Addr)
 		rStore, err := auth.NewRedisStore(cfg.JWT.Store.Redis)
 		if err != nil {
 			logger.Fatalf("redis store: %v", err)
 		}
 		store = rStore
 	case "memory":
+		logger.Debugf("memory store")
 		mStore, err := auth.NewMemoryStore(cfg.JWT)
 		if err != nil {
 			logger.Fatalf("memory store: %v", err)
@@ -53,6 +55,7 @@ func initTokenStore(cfg config.Cfg) {
 // 注册所有路由与中间件
 func registerGinRouter(cfg config.Cfg) *gin.Engine {
 	r := gin.New()
+	logger.Debugf("gin mode: %s", cfg.Server.Mode)
 	gin.SetMode(cfg.Server.Mode)
 	router.Register(r, cfg) // 注册所有路由与中间件
 	return r

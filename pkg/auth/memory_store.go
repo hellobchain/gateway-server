@@ -9,7 +9,7 @@ import (
 )
 
 type memoryStore struct {
-	c      *cache.Cache
+	c      *cache.Cache // 单独 namespace 避免冲突
 	claims *cache.Cache // 单独 namespace 避免冲突
 }
 

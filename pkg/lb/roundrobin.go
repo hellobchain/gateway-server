@@ -5,9 +5,9 @@ import (
 )
 
 type weightedRR struct {
-	insts []Instance
-	total int    // 权重总和
-	pos   uint64 // 原子游标
+	insts []Instance // 实例列表
+	total int        // 权重总和
+	pos   uint64     // 原子游标
 }
 
 func New(insts []Instance) Balancer {
