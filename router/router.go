@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/hellobchain/gateway-server/middleware"
 	"github.com/hellobchain/gateway-server/pkg/auth"
+	"github.com/hellobchain/gateway-server/pkg/breaker"
 	"github.com/hellobchain/gateway-server/pkg/config"
 	"github.com/hellobchain/gateway-server/pkg/lb"
 	"github.com/hellobchain/gateway-server/proxy"
@@ -39,6 +40,15 @@ func Register(r *gin.Engine, cfg config.Cfg) {
 
 // reloadRoutes 增量更新路由
 func loadRoutes(r *gin.Engine, cfg config.Cfg) {
+	breakerConfig := config.Get().Breaker
+	sreBreaker := breaker.New(breaker.Settings{
+		Enabled:               breakerConfig.Enabled,
+		MaxRequests:           breakerConfig.MaxRequests,
+		Interval:              breakerConfig.Interval,
+		Timeout:               breakerConfig.Timeout,
+		ErrorPercentThreshold: breakerConfig.ErrorPercent,
+		MinRequestAmount:      breakerConfig.MinRequestAmount,
+	})
 	// 初始化 JWT 组件
 	auth.Init(cfg.JWT)
 	newRules := make(map[string]bool)
@@ -49,8 +59,8 @@ func loadRoutes(r *gin.Engine, cfg config.Cfg) {
 		}
 		lbBalancer := initLB(getLbInstances(rule.Targets), rule.HealthCheckInterval)
 		newRules[path] = true
-		r.Any(path, proxy.LbHandler(lbBalancer))
-		r.Any(path+"/*proxyPath", proxy.LbHandler(lbBalancer))
+		r.Any(path, proxy.LbHandler(lbBalancer, sreBreaker))
+		r.Any(path+"/*proxyPath", proxy.LbHandler(lbBalancer, sreBreaker))
 		logger.Infof("registered route: %s -> %s", path, toString(rule.Targets))
 	}
 }

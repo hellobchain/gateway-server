@@ -1,12 +1,14 @@
 package proxy
 
 import (
+	"fmt"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
 
 	"github.com/gin-gonic/gin"
 	"github.com/hellobchain/gateway-server/pkg/auth"
+	"github.com/hellobchain/gateway-server/pkg/breaker"
 	"github.com/hellobchain/gateway-server/pkg/lb"
 	"github.com/hellobchain/wswlog/wlogging"
 )
@@ -26,7 +28,7 @@ func Handler(p *httputil.ReverseProxy) gin.HandlerFunc {
 	}
 }
 
-func LbHandler(lbBalancer lb.Balancer) gin.HandlerFunc {
+func LbHandler(lbBalancer lb.Balancer, sreBreaker *breaker.SreBreaker) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		addr, ok, isRemovePrex := lbBalancer.Pick()
 		if !ok {
@@ -45,6 +47,22 @@ func LbHandler(lbBalancer lb.Balancer) gin.HandlerFunc {
 			logger.Debugf("real router path: %s", targetPath)
 			c.Request.URL.Path = targetPath
 		}
-		p.ServeHTTP(c.Writer, c.Request)
+		if sreBreaker.Enabled() {
+			p.ErrorHandler = func(w http.ResponseWriter, r *http.Request, err error) {
+				w.WriteHeader(http.StatusBadGateway)
+			}
+			err := sreBreaker.Do(func() error {
+				p.ServeHTTP(c.Writer, c.Request)
+				if c.Writer.Status() >= 500 {
+					return fmt.Errorf("backend 5xx")
+				}
+				return nil
+			})
+			if err == breaker.ErrBreakerOpen {
+				auth.ResultCode(c, http.StatusServiceUnavailable, "circuit breaker open")
+			}
+		} else {
+			p.ServeHTTP(c.Writer, c.Request)
+		}
 	}
 }

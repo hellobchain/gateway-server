@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/fsnotify/fsnotify"
 	"github.com/hellobchain/wswlog/wlogging"
@@ -18,6 +19,7 @@ type Cfg struct {
 	Routes          []RoutesConfig  `mapstructure:"routes"`    // 路由配置
 	JWT             JWT             `mapstructure:"jwt"`       // JWT 配置
 	InterceptConfig InterceptConfig `mapstructure:"intercept"` // 拦截配置
+	Breaker         Breaker         `mapstructure:"breaker"`   // 熔断配置
 }
 type ServerConfig struct {
 	Port     int    `mapstructure:"port"`      // 监听端口
@@ -84,6 +86,15 @@ type InterceptUrlConfig struct {
 
 type InterceptGlobalConfig struct {
 	QPS int `mapstructure:"qps"` // 全局拦截
+}
+
+type Breaker struct {
+	Enabled          bool          `mapstructure:"enabled"`            // 熔断器是否开启
+	MaxRequests      uint32        `mapstructure:"max_requests"`       // 半开时最大探测请求数
+	Interval         time.Duration `mapstructure:"interval"`           // 统计窗口
+	Timeout          time.Duration `mapstructure:"timeout"`            // 熔断后多久进入半开
+	ErrorPercent     float64       `mapstructure:"error_percent"`      // 错误率阈值（0-100）
+	MinRequestAmount uint32        `mapstructure:"min_request_amount"` // 最小请求数才触发错误率计算
 }
 
 var (

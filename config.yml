@@ -50,3 +50,12 @@ intercept:
     white_list: []       # 若开启，仅允许白名单
   global:
     qps: 10000          # 网关总 QPS
+
+# 限流
+breaker:
+  enabled: false # 熔断器开关
+  max_requests: 5 # 熔断器最大请求数
+  interval: 10s # 熔断器间隔
+  timeout: 5s # 熔断器超时时间
+  error_percent: 50 # 熔断器错误百分比
+  min_request_amount: 10 # 熔断器最小请求数

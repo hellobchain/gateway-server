@@ -5,8 +5,11 @@ import (
 	"time"
 
 	"github.com/go-redis/redis/v8"
+	lru "github.com/hashicorp/golang-lru/v2"
 	"github.com/hellobchain/gateway-server/pkg/config"
 )
+
+var local, _ = lru.New[string, bool](10000)
 
 type redisStore struct {
 	client *redis.Client // redis client
@@ -36,7 +39,14 @@ func (r *redisStore) DelToken(key string) error {
 	return r.client.Del(context.Background(), key).Err()
 }
 func (r *redisStore) IsTokenValid(key string) (bool, error) {
+	// 增加本地缓存 减少redis访问
+	if v, ok := local.Get(key); ok {
+		return v, nil
+	}
 	n, err := r.client.Exists(context.Background(), key).Result()
+	if err == nil {
+		local.Add(key, n == 1)
+	}
 	return n == 1, err
 }
 func (r *redisStore) SetClaims(key string, claims JwtMapClaims) error {
