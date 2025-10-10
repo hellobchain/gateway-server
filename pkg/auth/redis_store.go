@@ -39,14 +39,17 @@ func (r *redisStore) DelToken(key string) error {
 	return r.client.Del(context.Background(), key).Err()
 }
 func (r *redisStore) IsTokenValid(key string) (bool, error) {
+	logger.Infof("redis key: %s", key)
 	// 增加本地缓存 减少redis访问
 	if v, ok := local.Get(key); ok {
+		logger.Infof("local key: %s, local cache: %v", key, v)
 		return v, nil
 	}
 	n, err := r.client.Exists(context.Background(), key).Result()
 	if err == nil {
 		local.Add(key, n == 1)
 	}
+	logger.Infof("redis key: %s, redis cache: %v", key, n)
 	return n == 1, err
 }
 func (r *redisStore) SetClaims(key string, claims JwtMapClaims) error {
